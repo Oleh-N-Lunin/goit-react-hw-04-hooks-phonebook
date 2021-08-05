@@ -8,7 +8,10 @@ function СontactList({ contactList, onDeleted }) {
       {contactList.map(({ id, name, number }) => {
         return (
           <li key={id}>
-            {name}: {number}
+            <span>{name}:</span>
+            <span>
+              <a href={`tel: ${number}`}>{ number}</a>
+            </span>
             <button
               className={styles.btnList}
               type="button"

@@ -1,70 +1,78 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import shortid from 'shortid';
 
 import styles from "../FormStyles/FormStyles.module.css";
 
-class Form extends Component {
-    state = {
-        name: '',
-        number: '',
-    };
+function Form ({ contactList, onSubmit }) {
+    const [name, setName] = useState("");
+    const [number, setNumber] = useState("");
 
-    InputValues = e => {
+    const InputValues = e => {
         const { name, value } = e.currentTarget;
-        this.setState({ [name]: value });
+        
+        switch (name) {
+            case "name":
+                setName(value);
+                break;
+            case "number":
+                setNumber(value);
+                break;
+            default:
+                return;
+        }
     };
 
-    addContact = e => {
+    const addContact = e => {
         e.preventDefault();
-        const checkName = this.props.contactList({ name: this.state.name });
+        const checkName = contactList(name);
         if (checkName) {
             alert("You already have this contact name!!");
             return;
         }
 
-        this.props.onSubmit({
+        onSubmit({
             id: shortid.generate(),
-            name: this.state.name,
-            number: this.state.number,
+            name,
+            number,
         });
 
-        this.resetInputValues();
+        resetInputValues();
     };
 
-    resetInputValues = () => {
-        this.setState({ name: '', number: '' });
+    const resetInputValues = () => {
+        setName("");
+        setNumber("");
     };
 
-    render() {
         const idName = shortid.generate();
         const idNumber = shortid.generate();
 
         return (
-            <form className={styles.form} onSubmit={this.addContact}>
+            <form className={styles.form} onSubmit={addContact}>
                 <label className={styles.labelName} htmlFor={idName}>Name</label>
                 <input
                     id={idName}
                     type="text"
                     name="name"
-                    value={this.state.name}
-                    onChange={this.InputValues}
+                    value={name}
+                    onChange={InputValues}
                     autoComplete="off"
                 />
                 <label className={styles.labelNumber} htmlFor={idNumber}>Phone number</label>
                 <input
                     id={idNumber}
+                    placeholder="(0XX) XX-XX-XXX"
                     type="tel"
                     pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
                     name="number"
-                    value={this.state.number}
-                    onChange={this.InputValues}
+                    value={number}
+                    onChange={InputValues}
                     autoComplete="off"
                     required
                 />
                 <button className={styles.btnForm} type="submit">Add contact</button>
             </form>
         );
-    }
 }
 
 export default Form;
